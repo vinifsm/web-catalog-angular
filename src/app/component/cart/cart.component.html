@@ -1,0 +1,158 @@
+
+<div class="cart-page">
+  <div class="cart-header">
+    <h1>Carrinho</h1>
+    <p *ngIf="!items.length" class="empty-cart">Seu carrinho está vazio</p>
+  </div>
+
+  <div *ngIf="items.length" class="cart-content">
+    <div class="table-container">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th class="product-col">Produto</th>
+            <th class="price-col">Preço</th>
+            <th class="quantity-col">Quantidade</th>
+            <th class="subtotal-col">Subtotal</th>
+            <th class="actions-col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let it of items" class="cart-item">
+            <td class="product-info">
+              <div class="product-details">
+                <span class="product-name">{{ it.product.name }}</span>
+              </div>
+            </td>
+            <td class="price">
+              <span class="price-value">R$ {{ it.product.price | number:'1.2-2' }}</span>
+            </td>
+            <td class="quantity">
+              <div class="quantity-controls">
+                <button class="btn-quantity btn-decrease" (click)="decreaseQuantity(it.product.id)">-</button>
+                <input 
+                  type="number" 
+                  class="quantity-input" 
+                  [value]="it.quantity" 
+                  (change)="updateQty(it.product.id, $event)"
+                  min="1"
+                >
+                <button class="btn-quantity btn-increase" (click)="increaseQuantity(it.product.id)">+</button>
+              </div>
+            </td>
+            <td class="subtotal">
+              <span class="subtotal-value">R$ {{ (it.product.price * it.quantity) | number:'1.2-2' }}</span>
+            </td>
+            <td class="actions">
+              <button class="btn-remove" (click)="remove(it.product.id)" title="Remover item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-content">
+        <div class="total-section">
+          <div class="total-line">
+            <span class="total-label">Total:</span>
+            <span class="total-value">R$ {{ getTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="cart-actions">
+          <button class="btn-whatsapp" (click)="openWhatsAppModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+            </svg>
+            Enviar via WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para enviar via WhatsApp -->
+<div *ngIf="showWhatsAppModal" class="modal-overlay" (click)="closeWhatsAppModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Enviar Pedido via WhatsApp</h2>
+      <button class="close-btn" (click)="closeWhatsAppModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="order-summary">
+        <h3 class="summary-title">Resumo do Pedido</h3>
+        <div class="items-list">
+          <div *ngFor="let item of items" class="order-item">
+            <span class="item-name">{{ item.product.name }}</span>
+            <span class="item-quantity">x{{ item.quantity }}</span>
+            <span class="item-price">R$ {{ (item.product.price * item.quantity) | number:'1.2-2' }}</span>
+          </div>
+        </div>
+        <div class="order-total">
+          <span class="total-label">Total:</span>
+          <span class="total-value">R$ {{ getTotal() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      
+      <div class="customer-info">
+        <label class="customer-label">Seu nome para o pedido:</label>
+        <input 
+          type="text" 
+          class="customer-input" 
+          [(ngModel)]="customerName"
+          placeholder="Digite seu nome completo"
+          maxlength="50"
+        >
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeWhatsAppModal()">
+        Cancelar
+      </button>
+      <button class="confirm-btn" (click)="sendToWhatsApp()" [disabled]="!customerName.trim()">
+        <span class="btn-content">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+          </svg>
+          Enviar via WhatsApp
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensagem de sucesso -->
+<div *ngIf="showSuccessMessage" class="success-toast" (click)="closeSuccessMessage()">
+  <div class="success-content" (click)="$event.stopPropagation()">
+    <div class="success-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 12l2 2 4-4"></path>
+        <circle cx="12" cy="12" r="10"></circle>
+      </svg>
+    </div>
+    <div class="success-text">
+      <h4>Pedido enviado!</h4>
+      <p>Seu pedido foi enviado via WhatsApp com sucesso. O carrinho foi limpo.</p>
+    </div>
+    <button class="success-close" (click)="closeSuccessMessage(); $event.stopPropagation()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</div>
+

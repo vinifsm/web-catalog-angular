@@ -1,0 +1,12 @@
+
+<main class="container">
+  <section class="product-grid" infiniteScroll
+           [infiniteScrollDistance]="2"
+           [infiniteScrollThrottle]="150"
+           (scrolled)="onScroll()">
+    <app-product-card *ngFor="let p of products" [product]="p"></app-product-card>
+  </section>
+
+  <div *ngIf="loading" class="loading">Carregando...</div>
+  <div *ngIf="finished" class="finished">Fim dos produtos</div>
+</main>

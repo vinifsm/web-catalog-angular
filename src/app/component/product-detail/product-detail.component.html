@@ -1,0 +1,122 @@
+
+<div *ngIf="product" class="product-detail-container">
+  <div class="product-detail">
+    <div class="product-image-section">
+      <div class="image-wrapper">
+        <img [src]="product.image?.url || 'assets/no-image.svg'" alt="{{product.name}}" class="product-image">
+      </div>
+    </div>
+    
+    <div class="product-info-section">
+      <div class="product-header">
+        <h1 class="product-title">{{ product.name }}</h1>
+      </div>
+      
+      <div class="product-details">
+        <div class="price-section">
+          <span class="price-label">Preço:</span>
+          <span class="product-price">R$ {{ product.price | number:'1.2-2' }}</span>
+        </div>
+        
+        <div class="description-section">
+          <h3 class="description-title">Descrição</h3>
+          <p class="product-description">{{ product.description }}</p>
+        </div>
+        
+        <div class="action-section">
+          <button class="add-to-cart-btn" (click)="openAddToCartModal()">
+            <img src="assets/cart.svg" alt="Carrinho" class="cart-icon">
+            Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para adicionar ao carrinho -->
+<div *ngIf="showAddToCartModal" class="modal-overlay" (click)="closeAddToCartModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Adicionar ao Carrinho</h2>
+      <button class="close-btn" (click)="closeAddToCartModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="product-preview">
+        <img [src]="product?.image?.url || 'assets/no-image.svg'" alt="{{product?.name}}" class="preview-image">
+        <div class="preview-info">
+          <h3 class="preview-name">{{ product?.name }}</h3>
+          <p class="preview-price">R$ {{ product?.price | number:'1.2-2' }}</p>
+        </div>
+      </div>
+      
+      <div class="quantity-section">
+        <label class="quantity-label">Quantidade:</label>
+        <div class="quantity-controls">
+          <button class="quantity-btn" (click)="decrementQuantity()" [disabled]="quantity <= 1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <span class="quantity-value">{{ quantity }}</span>
+          <button class="quantity-btn" (click)="incrementQuantity()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="total-section">
+        <div class="total-line">
+          <span class="total-label">Total:</span>
+          <span class="total-price">R$ {{ (product?.price || 0) * quantity | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="cancelAddToCart()">
+        Cancelar
+      </button>
+      <button class="confirm-btn" (click)="addToCart()">
+        <span class="btn-content">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+          Confirmar
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensagem de sucesso -->
+<div *ngIf="showSuccessMessage" class="success-toast" (click)="closeSuccessMessage()">
+  <div class="success-content" (click)="$event.stopPropagation()">
+    <div class="success-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 12l2 2 4-4"></path>
+        <circle cx="12" cy="12" r="10"></circle>
+      </svg>
+    </div>
+    <div class="success-text">
+      <h4>Produto adicionado!</h4>
+      <p>O item foi adicionado ao seu carrinho com sucesso.</p>
+    </div>
+    <button class="success-close" (click)="closeSuccessMessage(); $event.stopPropagation()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</div>

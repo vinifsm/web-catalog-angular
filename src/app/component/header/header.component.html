@@ -1,0 +1,22 @@
+<header class="header">
+    <div class="header-left">
+      <select class="category-select" (change)="onCategoryChange($event)">
+        <option value="">Categorias</option>
+        <option *ngFor="let c of categories" [value]="c.id">
+          {{ c.name }}
+        </option>
+      </select>
+    </div>
+  
+    <div class="header-center">
+      <a routerLink="/" class="brand">Catalogo</a>
+    </div>
+  
+    <div class="header-right">
+      <button (click)="goToCart()" class="cart-btn" title="Carrinho">
+        <img src="assets/cart.svg" alt="Carrinho" class="cart-icon">
+        <span class="cart-count">{{ cartCount }}</span>
+      </button>
+    </div>
+  </header>
+  
