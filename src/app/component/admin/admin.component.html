@@ -1,0 +1,64 @@
+<div class="admin-layout">
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" *ngIf="sidebarOpen && isMobile" (click)="closeSidebar()"></div>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.sidebar-closed]="!sidebarOpen" [class.mobile-sidebar]="isMobile">
+    <div class="sidebar-header">
+      <h2>Painel Administrativo</h2>
+      <button class="close-btn" *ngIf="isMobile" (click)="closeSidebar()">×</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section" *ngIf="isAdmin()">
+        <h3>Administração</h3>
+        <a routerLink="/admin/stores" routerLinkActive="active" class="nav-link" (click)="onNavLinkClick()">
+          <span class="nav-icon">🏪</span>
+          <span class="nav-text">Lojas</span>
+        </a>
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link" (click)="onNavLinkClick()">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Usuários</span>
+        </a>
+      </div>
+
+      <div class="nav-section" *ngIf="isStoreOwner()">
+        <h3>Conteúdo</h3>
+        <a routerLink="/admin/categories" routerLinkActive="active" class="nav-link" (click)="onNavLinkClick()">
+          <span class="nav-icon">📂</span>
+          <span class="nav-text">Categorias</span>
+        </a>
+        <a routerLink="/admin/products" routerLinkActive="active" class="nav-link" (click)="onNavLinkClick()">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Produtos</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span class="logout-icon">🔒</span>
+        <span class="logout-text">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="main-header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="toggleSidebar()" [class.active]="sidebarOpen">
+          <span class="menu-icon">☰</span>
+        </button>
+        <h1 [class.hidden-mobile]="isMobile">Painel Administrativo</h1>
+      </div>
+      <div class="header-right">
+        <span class="welcome-text">Bem-vindo, {{ currentUser?.username }}!</span>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

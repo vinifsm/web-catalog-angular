@@ -6,5 +6,5 @@ export interface Store {
     description: string;
     phone: string;
     identifier: string;
-    image: Image;
+    image?: Image;
 }

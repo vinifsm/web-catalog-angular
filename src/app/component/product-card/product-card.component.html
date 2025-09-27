@@ -1,5 +1,5 @@
 <div class="card" (click)="viewDetail()">
-    <img [src]="product.image?.url || 'assets/no-image.svg'" alt="{{product.name}}" class="card-img">
+    <img [src]="imageService.getImageUrl(product.image?.fileName || '')" alt="{{product.name}}" class="card-img">
     <div class="card-body">
       <h3 class="card-title">{{ product.name }}</h3>
       <p class="card-price">R$ {{ product.price | number:'1.2-2' }}</p>

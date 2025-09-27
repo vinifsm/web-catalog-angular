@@ -1,10 +1,14 @@
 .card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  background: rgba(192, 192, 192, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
   
@@ -14,18 +18,47 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.15) 0%, 
+      rgba(192, 192, 192, 0.1) 25%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(192, 192, 192, 0.1) 75%,
+      rgba(255, 255, 255, 0.15) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, 
+      rgba(255, 255, 255, 0.08) 0%, 
+      transparent 70%);
+    animation: shimmer 4s ease-in-out infinite;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
   
   &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    border-color: #c7d2fe;
+    transform: translateY(-8px);
+    background: rgba(192, 192, 192, 0.35);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 20px 40px rgba(31, 38, 135, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
     
     &::before {
+      opacity: 1;
+    }
+    
+    &::after {
       opacity: 1;
     }
   }
@@ -34,43 +67,81 @@
 .card-img {
   width: 100%;
   height: 200px;
-  object-fit: cover;
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  background: white;
   color: #64748b;
   font-size: 14px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
 
   &[src*=".svg"] {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
     filter: brightness(1.2) contrast(0.8) saturate(0.6);
     opacity: 0.7;
+    object-fit: contain;
+    padding: 20px;
   }
 }
 
 .card-body {
-  padding: 16px;
-  background: linear-gradient(135deg, #8ca0bb 0%, #58607a 50%, #8ca0bb 100%);
+  padding: 20px;
+  background: rgba(71, 85, 105, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.2) 0%, 
+      rgba(192, 192, 192, 0.15) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(192, 192, 192, 0.15) 75%,
+      rgba(255, 255, 255, 0.2) 100%);
+    opacity: 1;
+    pointer-events: none;
+  }
 }
 
 .card-title {
   font-size: 18px;
   font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 8px;
+  color: white;
+  margin-bottom: 12px;
   line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .card-price {
   font-size: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #00ffae 0%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #10b981;
   margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% { 
+    transform: translateX(-100%) translateY(-100%) rotate(30deg);
+    opacity: 0;
+  }
+  50% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(100%) translateY(100%) rotate(30deg);
+    opacity: 0;
+  }
 }

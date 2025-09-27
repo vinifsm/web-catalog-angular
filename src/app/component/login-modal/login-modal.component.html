@@ -1,0 +1,93 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isLoginMode ? 'Login' : 'Registrar' }}</h2>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Login Form -->
+      <form *ngIf="isLoginMode" (ngSubmit)="onLogin()" class="auth-form">
+        <div class="form-group">
+          <label for="username">Usuário:</label>
+          <input 
+            type="text" 
+            id="username" 
+            [(ngModel)]="loginForm.username" 
+            name="username"
+            placeholder="Digite seu usuário"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha:</label>
+          <input 
+            type="password" 
+            id="password" 
+            [(ngModel)]="loginForm.password" 
+            name="password"
+            placeholder="Digite sua senha"
+            required>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+          {{ isLoading ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form *ngIf="!isLoginMode" (ngSubmit)="onRegister()" class="auth-form">
+        <div class="form-group">
+          <label for="reg-username">Usuário:</label>
+          <input 
+            type="text" 
+            id="reg-username" 
+            [(ngModel)]="registerForm.username" 
+            name="reg-username"
+            placeholder="Digite seu usuário"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password">Senha:</label>
+          <input 
+            type="password" 
+            id="reg-password" 
+            [(ngModel)]="registerForm.password" 
+            name="reg-password"
+            placeholder="Digite sua senha"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Tipo de Usuário:</label>
+          <select id="role" [(ngModel)]="registerForm.role" name="role">
+            <option value="STORE_OWNER">Proprietário de Loja</option>
+            <option value="CLIENT">Cliente</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+          {{ isLoading ? 'Criando...' : 'Criar Conta' }}
+        </button>
+      </form>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Toggle Mode -->
+      <div class="toggle-mode">
+        <p>
+          {{ isLoginMode ? 'Não tem uma conta?' : 'Já tem uma conta?' }}
+          <button type="button" class="toggle-btn" (click)="toggleMode()">
+            {{ isLoginMode ? 'Registrar' : 'Login' }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

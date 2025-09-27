@@ -1,9 +1,12 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { CartService } from '../../service/cart.service';
+import { StoreService } from '../../service/store.service';
 import { CartItem } from '../../model/cart-item.model';
+import { Store } from '../../model/store.model';
 
 @Component({
   selector: 'app-cart',
@@ -15,17 +18,44 @@ import { CartItem } from '../../model/cart-item.model';
     FormsModule
   ]
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
   items: CartItem[] = [];
+  store?: Store;
   showWhatsAppModal = false;
   customerName = '';
   showSuccessMessage = false;
+  storeIdentifier: string = '';
 
   constructor(
     private cartService: CartService,
+    private storeService: StoreService,
+    private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {
     this.cartService.items$.subscribe(items => this.items = items);
+  }
+
+  ngOnInit(): void {
+    this.storeIdentifier = this.route.snapshot.paramMap.get('identifier')!;
+    this.loadStore();
+  }
+
+  loadStore(): void {
+    this.storeService.getStoreByIdentifier(this.storeIdentifier)
+      .subscribe({
+        next: (store) => {
+          this.store = store;
+          this.cartService.setCurrentStore(store.id);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar loja:', error);
+        }
+      });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/store', this.storeIdentifier]);
   }
 
   updateQty(productId: string, event: any) {
@@ -96,7 +126,6 @@ export class CartComponent {
     this.cartService.clear();
     this.showWhatsAppModal = false;
     
-    // Mostrar mensagem de sucesso
     this.showSuccessMessage = true;
     this.cdr.detectChanges();
     

@@ -1,0 +1,16 @@
+<header class="homepage-header">
+  <div class="header-content">
+    <div class="header-right">
+      <button class="login-btn" (click)="openLoginModal()">
+        <span class="login-icon">🔐</span>
+        Login
+      </button>
+    </div>
+  </div>
+</header>
+
+<app-login-modal 
+  *ngIf="showLoginModal"
+  (closeModal)="closeLoginModal()"
+  (loginSuccess)="onLoginSuccess()">
+</app-login-modal>

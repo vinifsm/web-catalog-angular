@@ -3,30 +3,42 @@ import { BehaviorSubject } from 'rxjs';
 import { CartItem } from '../model/cart-item.model';
 import { Product } from '../model/product.model';
 
-const STORAGE_KEY = 'catalog_cart_v1';
+const STORAGE_KEY_PREFIX = 'catalog_cart_store_';
 
 @Injectable({
     providedIn: 'root'
   })
 export class CartService {
-  private itemsSubject = new BehaviorSubject<CartItem[]>([]); // inicializa vazio
+  private itemsSubject = new BehaviorSubject<CartItem[]>([]);
   items$ = this.itemsSubject.asObservable();
+  private currentStoreId: string | null = null;
 
   constructor() {
-    this.loadInitialItems();
+   
   }
 
-  private loadInitialItems() {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const raw = localStorage.getItem(STORAGE_KEY);
+  setCurrentStore(storeId: string) {
+    this.currentStoreId = storeId;
+    this.loadStoreItems();
+  }
+
+  private getStorageKey(): string {
+    return this.currentStoreId ? `${STORAGE_KEY_PREFIX}${this.currentStoreId}` : 'catalog_cart_default';
+  }
+
+  private loadStoreItems() {
+    if (typeof window !== 'undefined' && window.localStorage && this.currentStoreId) {
+      const raw = localStorage.getItem(this.getStorageKey());
       const items: CartItem[] = raw ? JSON.parse(raw) : [];
       this.itemsSubject.next(items);
+    } else {
+      this.itemsSubject.next([]);
     }
   }
 
   private saveToStorage(items: CartItem[]) {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    if (typeof window !== 'undefined' && window.localStorage && this.currentStoreId) {
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(items));
     }
     this.itemsSubject.next(items);
   }

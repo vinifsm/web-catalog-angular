@@ -16,7 +16,11 @@ export class CategoryService {
 
   getAllCategories(): Observable<Category[]> {
     const url = this.configService.getApiUrl('/categories');
-    console.log('📂 CategoryService - Fazendo requisição para:', url);
+    return this.http.get<Category[]>(url);
+  }
+
+  getCategoriesByStore(storeId: string): Observable<Category[]> {
+    const url = this.configService.getApiUrl(`/categories?storeId=${storeId}`);
     return this.http.get<Category[]>(url);
   }
 
