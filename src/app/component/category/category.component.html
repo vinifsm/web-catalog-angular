@@ -1,8 +1,0 @@
-
-<div class="category-page">
-  <h1>{{ category?.name }}</h1>
-
-  <section class="product-grid" infiniteScroll (scrolled)="onScroll()" [infiniteScrollDistance]="2">
-    <app-product-card *ngFor="let p of products" [product]="p"></app-product-card>
-  </section>
-</div>

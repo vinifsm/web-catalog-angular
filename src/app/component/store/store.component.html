@@ -1,0 +1,75 @@
+<app-header></app-header>
+<main class="container" *ngIf="store">
+  <!-- Header da Loja -->
+  <header class="store-header">
+    <div class="store-info">
+      <div class="store-image" *ngIf="store.image">
+        <img [src]="store.image.url" [alt]="store.name" />
+      </div>
+      <div class="store-details">
+        <h1>{{ store.name }}</h1>
+        <p class="store-description">{{ store.description }}</p>
+        <div class="store-contact" *ngIf="store.phone">
+          <span class="phone">📞 {{ store.phone }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav class="categories-nav" *ngIf="categories.length > 0">
+    <h2>Categorias</h2>
+    <div class="categories-list" 
+         #categoriesList 
+         (scroll)="onCategoriesScroll()"
+         (mousedown)="onMouseDown($event)"
+         (mousemove)="onMouseMove($event)"
+         (mouseup)="onMouseUp()"
+         (mouseleave)="onMouseUp()"
+         (touchstart)="onTouchStart($event)"
+         (touchmove)="onTouchMove($event)"
+         (touchend)="onTouchEnd()">
+      <button
+        [class.active]="selectedCategory?.id === 'all'"
+        (click)="selectAllCategory()"
+        class="category-btn">
+        Todas
+      </button>
+      <button 
+        *ngFor="let category of categories" 
+        [class.active]="selectedCategory?.id === category.id"
+        (click)="selectCategory(category)"
+        class="category-btn">
+        {{ category.name }}
+      </button>
+    </div>
+  </nav>
+
+  <section class="products-section" *ngIf="selectedCategory">
+    <h3>{{ selectedCategory.name }}</h3>
+    
+    
+    <div class="product-grid" 
+         infiniteScroll
+         [infiniteScrollDistance]="2"
+         [infiniteScrollThrottle]="150"
+         (scrolled)="onScroll()">
+      <app-product-card *ngFor="let product of products; trackBy: trackByProductId" [product]="product"></app-product-card>
+    </div>
+
+    <div *ngIf="loading" class="loading">Carregando produtos...</div>
+    <div *ngIf="finished && products.length > 0" class="finished">Fim da lista de produtos</div>
+    <div *ngIf="!loading && products.length === 0" class="no-products">
+      Nenhum produto encontrado nesta categoria.
+    </div>
+  </section>
+
+  <div *ngIf="categories.length === 0" class="no-categories">
+    <h3>Esta loja ainda não possui categorias cadastradas.</h3>
+    <p>Entre em contato com o proprietário da loja para mais informações.</p>
+  </div>
+</main>
+
+
+<div *ngIf="!store" class="store-loading">
+  <div class="loading-spinner"></div>
+  <p>Carregando informações da loja...</p>
+</div>

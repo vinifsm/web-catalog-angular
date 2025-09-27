@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { Product } from '../../model/product.model';
+import { ImageService } from '../../service/image.service';
 
 @Component({
   selector: 'app-product-card',
@@ -17,9 +18,22 @@ import { Product } from '../../model/product.model';
 export class ProductCardComponent {
   @Input() product!: Product;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute,
+    public imageService: ImageService
+  ) {}
 
   viewDetail() {
-    this.router.navigate(['/product', this.product.id]);
+    const storeIdentifier = this.route.snapshot.paramMap.get('identifier');
+
+    if (storeIdentifier && this.product.id) {
+      this.router.navigate(['/store', storeIdentifier, 'product', this.product.id]);
+    } else {
+      console.error('ProductCard - Dados inválidos para navegação:', {
+        storeIdentifier: storeIdentifier,
+        productId: this.product.id
+      });
+    }
   }
 }

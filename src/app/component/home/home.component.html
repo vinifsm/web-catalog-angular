@@ -1,12 +1,30 @@
 
+<app-homepage-header></app-homepage-header>
+
 <main class="container">
-  <section class="product-grid" infiniteScroll
-           [infiniteScrollDistance]="2"
-           [infiniteScrollThrottle]="150"
-           (scrolled)="onScroll()">
-    <app-product-card *ngFor="let p of products" [product]="p"></app-product-card>
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Catálogo Digital</h1>
+      <p class="hero-description">
+        Plataforma para criação e gerenciamento de catálogos digitais para lojas e empresas.
+        Transforme sua loja em uma experiência digital.
+      </p>
+    </div>
   </section>
 
-  <div *ngIf="loading" class="loading">Carregando...</div>
-  <div *ngIf="finished" class="finished">Fim dos produtos</div>
+  <section class="contact-section">
+    <h2>Interessado em ter seu catálogo?</h2>
+    <p>Entre em contato para criar seu próprio catálogo:</p>
+    
+    <div class="contact-info">
+      <div class="contact-item">
+        <strong>📧 Email:</strong>
+        <a href="mailto:vini.fsm9@live.com">vini.fsm9@live.com</a>
+      </div>
+      <div class="contact-item">
+        <strong>📱 WhatsApp:</strong>
+        <a href="https://wa.me/5518997501270" target="_blank">(18) 99750-1270</a>
+      </div>
+    </div>
+  </section>
 </main>

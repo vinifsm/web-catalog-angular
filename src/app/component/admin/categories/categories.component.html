@@ -1,0 +1,85 @@
+<div class="categories-container">
+  <div class="page-header">
+    <h2>Gerenciar Categorias</h2>
+    <button class="create-btn" (click)="openCreateModal()" [disabled]="isLoading">
+      <span class="btn-icon">➕</span>
+      Nova Categoria
+    </button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar categorias..." 
+        [(ngModel)]="searchTerm"
+        (input)="searchCategories()"
+        class="search-input">
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+
+  <div class="categories-grid" *ngIf="!isLoading">
+    <div class="category-card" *ngFor="let category of filteredCategories">
+      <div class="category-header">
+        <h3>{{ category.name }}</h3>
+        <div class="category-actions">
+          <button class="edit-btn" (click)="openEditModal(category)" title="Editar">
+            ✏️
+          </button>
+          <button class="delete-btn" (click)="deleteCategory(category)" title="Excluir">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Carregando categorias...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredCategories.length === 0" class="empty-state">
+    <p>Nenhuma categoria encontrada</p>
+  </div>
+</div>
+
+<!-- Modal de Criação/Edição -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditing ? 'Editar Categoria' : 'Nova Categoria' }}</h3>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="saveCategory()" class="category-form">
+        <div class="form-group">
+          <label for="name">Nome da Categoria:</label>
+          <input 
+            type="text" 
+            id="name" 
+            [(ngModel)]="currentCategory.name" 
+            name="name"
+            placeholder="Digite o nome da categoria"
+            required>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="save-btn" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+            {{ isLoading ? 'Salvando...' : (isEditing ? 'Atualizar' : 'Criar') }}
+          </button>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

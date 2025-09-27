@@ -25,14 +25,31 @@ export class ProductService {
     }
 
     const url = this.configService.getApiUrl('/products');
-    console.log('🛒 ProductService - Fazendo requisição para:', url);
-    console.log('🛒 ProductService - Parâmetros:', { page, limit, categoryId });
   
     return this.http
       .get<{ content: Product[] }>(url, { params })
       .pipe(
         map(res => {
-          console.log('🛒 ProductService - Resposta recebida:', res);
+          return res.content;
+        })
+      );
+  }
+
+  getProductsByStore(page = 0, limit = 20, storeId?: string): Observable<Product[]> {
+    let params = new HttpParams()
+      .set('page', String(page))
+      .set('limit', String(limit));
+  
+    if (storeId) {
+      params = params.set('storeId', storeId);
+    }
+
+    const url = this.configService.getApiUrl('/products');
+  
+    return this.http
+      .get<{ content: Product[] }>(url, { params })
+      .pipe(
+        map(res => {
           return res.content;
         })
       );

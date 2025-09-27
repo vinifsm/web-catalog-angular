@@ -1,0 +1,122 @@
+<div class="users-container">
+  <div class="page-header">
+    <h2>Gerenciar Usuários</h2>
+    <button class="create-btn" (click)="openCreateModal()" [disabled]="isLoading">
+      <span class="btn-icon">➕</span>
+      Novo Usuário
+    </button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar usuários..." 
+        [(ngModel)]="searchTerm"
+        (input)="searchUsers()"
+        class="search-input">
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+
+  <div class="users-grid" *ngIf="!isLoading">
+    <div class="user-card" *ngFor="let user of filteredUsers">
+      <div class="user-header">
+        <h3>{{ user.username }}</h3>
+        <div class="user-actions">
+          <button class="edit-btn" (click)="openEditModal(user)" title="Editar">
+            ✏️
+          </button>
+          <button class="delete-btn" (click)="deleteUser(user)" title="Excluir">
+            🗑️
+          </button>
+        </div>
+      </div>
+      
+      <div class="user-content">
+        <div class="user-info">
+          <p><strong>Role:</strong> {{ user.role }}</p>
+          <p *ngIf="user.store"><strong>Loja:</strong> {{ user.store.name }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Carregando usuários...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredUsers.length === 0" class="empty-state">
+    <p>Nenhum usuário encontrado</p>
+  </div>
+</div>
+
+<!-- Modal de Criação/Edição -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditing ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="saveUser()" class="user-form">
+        <div class="form-group">
+          <label for="username">Nome de Usuário:</label>
+          <input 
+            type="text" 
+            id="username" 
+            [(ngModel)]="currentUser.username" 
+            name="username"
+            placeholder="Digite o nome de usuário"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha:</label>
+          <input 
+            type="password" 
+            id="password" 
+            [(ngModel)]="currentUser.password" 
+            name="password"
+            placeholder="Digite a senha"
+            [required]="!isEditing">
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role:</label>
+          <select id="role" [(ngModel)]="currentUser.role" name="role">
+            <option value="ADMIN">Administrador</option>
+            <option value="STORE_OWNER">Proprietário de Loja</option>
+            <option value="CLIENT">Cliente</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="currentUser.role !== 'ADMIN'">
+          <label for="storeId">Loja:</label>
+          <select id="storeId" [(ngModel)]="currentUser.storeId" name="storeId" required>
+            <option value="">Selecione uma loja</option>
+            <option *ngFor="let store of stores" [value]="store.id">
+              {{ store.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="save-btn" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+            {{ isLoading ? 'Salvando...' : (isEditing ? 'Atualizar' : 'Criar') }}
+          </button>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

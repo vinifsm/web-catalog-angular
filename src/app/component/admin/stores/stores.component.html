@@ -1,0 +1,129 @@
+<div class="stores-container">
+  <div class="page-header">
+    <h2>Gerenciar Lojas</h2>
+    <button class="create-btn" (click)="openCreateModal()" [disabled]="isLoading">
+      <span class="btn-icon">➕</span>
+      Nova Loja
+    </button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar lojas..." 
+        [(ngModel)]="searchTerm"
+        (input)="searchStores()"
+        class="search-input">
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+
+  <div class="stores-grid" *ngIf="!isLoading">
+    <div class="store-card" *ngFor="let store of filteredStores">
+      <div class="store-header">
+        <h3>{{ store.name }}</h3>
+        <div class="store-actions">
+          <button class="edit-btn" (click)="openEditModal(store)" title="Editar">
+            ✏️
+          </button>
+          <button class="delete-btn" (click)="deleteStore(store)" title="Excluir">
+            🗑️
+          </button>
+        </div>
+      </div>
+      
+      <div class="store-content">
+        <div class="store-info">
+          <p><strong>Identificador:</strong> {{ store.identifier }}</p>
+          <p><strong>Telefone:</strong> {{ store.phone || 'Não informado' }}</p>
+          <p><strong>Descrição:</strong> {{ store.description }}</p>
+        </div>
+        
+        <div class="store-image" *ngIf="store.image">
+          <img [src]="store.image.url" [alt]="store.name" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Carregando lojas...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredStores.length === 0" class="empty-state">
+    <p>Nenhuma loja encontrada</p>
+  </div>
+</div>
+
+<!-- Modal de Criação/Edição -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditing ? 'Editar Loja' : 'Nova Loja' }}</h3>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="saveStore()" class="store-form">
+        <div class="form-group">
+          <label for="name">Nome da Loja:</label>
+          <input 
+            type="text" 
+            id="name" 
+            [(ngModel)]="currentStore.name" 
+            name="name"
+            placeholder="Digite o nome da loja"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="identifier">Identificador:</label>
+          <input 
+            type="text" 
+            id="identifier" 
+            [(ngModel)]="currentStore.identifier" 
+            name="identifier"
+            placeholder="Ex: minhaloja123"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Telefone:</label>
+          <input 
+            type="text" 
+            id="phone" 
+            [(ngModel)]="currentStore.phone" 
+            name="phone"
+            placeholder="(11) 99999-9999">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descrição:</label>
+          <textarea 
+            id="description" 
+            [(ngModel)]="currentStore.description" 
+            name="description"
+            placeholder="Descreva a loja"
+            rows="4"
+            required></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="save-btn" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+            {{ isLoading ? 'Salvando...' : (isEditing ? 'Atualizar' : 'Criar') }}
+          </button>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

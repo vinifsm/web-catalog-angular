@@ -1,13 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './component/header/header.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   template: `
-    <app-header></app-header>
 <main>
   <router-outlet></router-outlet>
 </main>
@@ -16,9 +15,20 @@ import { RouterModule } from '@angular/router';
 </footer>
   `,
   imports: [
-    CommonModule,   // *ngIf, *ngFor e pipes
-    HeaderComponent,
-    RouterModule    // necessário para <router-outlet>
+    CommonModule,
+    RouterModule
   ]
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  showHeader = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.showHeader = event.url.startsWith('/store/');
+      });
+  }
+}
